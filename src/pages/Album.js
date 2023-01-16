@@ -3,7 +3,9 @@ import PropTypes from 'prop-types';
 
 class Album extends React.Component {
   render() {
-    const { id } = this.props.match.params;
+    const {
+      match: { params: { id },
+      } } = this.props;
     return (
       <div data-testid="page-album">
         Album
@@ -14,7 +16,11 @@ class Album extends React.Component {
 }
 
 Album.propTypes = {
-  id: PropTypes.string,
+  match: PropTypes.shape({
+    params: PropTypes.shape({
+      id: PropTypes.string,
+    }),
+  }).isRequired,
 };
 
 export default Album;

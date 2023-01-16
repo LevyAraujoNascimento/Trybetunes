@@ -22,5 +22,5 @@ Album.propTypes = {
     }),
   }).isRequired,
 };
-
+// teste
 export default Album;

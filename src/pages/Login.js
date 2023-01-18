@@ -34,19 +34,20 @@ class Login extends React.Component {
       name,
     };
     this.setState(
-      { loading: true },
+      () => ({ loading: true }),
       async () => {
         await createUser(user);
-        this.setState({
+        this.setState(() => ({
           loading: false,
           redirect: true,
-        });
+        }));
       },
     );
   };
 
   render() {
     const { startButton, loading, redirect } = this.state;
+    if (redirect) return (<Redirect to="/search" />);
     return (
       <form data-testid="page-login">
         <fieldset>
@@ -56,7 +57,7 @@ class Login extends React.Component {
             onChange={ this.startTest }
           />
           <button
-            type="submit"
+            type="button"
             data-testid="login-submit-button"
             disabled={ startButton }
             onClick={ this.saveUser }
@@ -65,7 +66,6 @@ class Login extends React.Component {
           </button>
         </fieldset>
         { loading ? <Loading /> : ''}
-        { redirect ? <Redirect to="search" /> : ''}
       </form>
     );
   }

@@ -13,6 +13,7 @@ class Search extends React.Component {
     resultKey: '',
     result: false,
     resultAlbums: [],
+    noResult: false,
   };
 
   searchTest = ({ target }) => {
@@ -44,30 +45,39 @@ class Search extends React.Component {
     this.setState(
       () => (
         {
-          result: true,
+          result: false,
           resultKey: searchKey,
           loading: true,
+          noResult: false,
         }
       ),
       async () => {
         const albums = await searchAlbumsAPI(searchKey);
         this.setState(() => (
           {
+            result: true,
             loading: false,
             resultAlbums: albums,
           }
         ));
+        if (albums.length === 0) {
+          this.setState(() => ({ noResult: true }));
+        } else {
+          this.setState(() => ({ noResult: false }));
+        }
       },
     );
   };
 
   render() {
     const { searchButton, searchKey, loading, result, resultKey,
-      resultAlbums } = this.state;
+      resultAlbums, noResult } = this.state;
+    const semResultado = 'Nenhum álbum foi encontrado';
     const listAlbum = resultAlbums.map((element) => (
       <li key={ element.collectionId }>
         <CardAlbum
-          artName={ element.artistId }
+          artName={ element.artistName }
+          albumName={ element.collectionName }
           collecId={ element.collectionId }
         />
       </li>
@@ -93,10 +103,9 @@ class Search extends React.Component {
             </button>
           </fieldset>
           { result ? <ResultText resultKey={ resultKey } /> : ''}
+          { result ? <ul>{ listAlbum }</ul> : ''}
+          { noResult ? <p>{ semResultado }</p> : ''}
           { loading ? <Loading /> : '' }
-          <ul>
-            { listAlbum }
-          </ul>
         </form>
       </div>
     );

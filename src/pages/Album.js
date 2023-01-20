@@ -34,7 +34,7 @@ class Album extends React.Component {
   };
 
   render() {
-    const { artistName, collectionName, musics } = this.state;
+    const { id, artistName, collectionName, musics } = this.state;
     const listMusic = musics.map((music) => (
       <li key={ music.trackId }>
         <MusicCard
@@ -49,6 +49,7 @@ class Album extends React.Component {
         <Header />
         <h1 data-testid="artist-name">{ artistName }</h1>
         <h2 data-testid="album-name">{ collectionName }</h2>
+        <h2>{ id }</h2>
         <ul>
           { listMusic }
         </ul>

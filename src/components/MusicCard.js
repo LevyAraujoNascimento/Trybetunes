@@ -3,7 +3,8 @@ import PropTypes from 'prop-types';
 
 class MusicCard extends React.Component {
   render() {
-    const { trackName, previewUrl } = this.props;
+    const { trackName, previewUrl, trackId, favoriteMusic } = this.props;
+    const trackText = `checkbox-music-${trackId}`;
     return (
       <fieldset>
         <p>{ trackName }</p>
@@ -14,6 +15,18 @@ class MusicCard extends React.Component {
           <code>audio</code>
           .
         </audio>
+        <label
+          htmlFor="favorito"
+          data-testid={ trackText }
+        >
+          Favorita
+          <input
+            type="checkbox"
+            name="favorito"
+            id="favorito"
+            onCheck={ () => favoriteMusic(trackId) }
+          />
+        </label>
       </fieldset>
     );
   }
@@ -22,11 +35,15 @@ class MusicCard extends React.Component {
 MusicCard.propTypes = {
   trackName: PropTypes.string,
   previewUrl: PropTypes.string,
+  trackId: PropTypes.number,
+  favoriteMusic: PropTypes.func,
 };
 
 MusicCard.defaultProps = {
   trackName: null,
   previewUrl: null,
+  trackId: null,
+  favoriteMusic: null,
 };
 
 export default MusicCard;

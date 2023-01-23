@@ -2,8 +2,15 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 class MusicCard extends React.Component {
+  checkMusic = ({ target }) => {
+    const { trackId, favoriteMusic } = this.props;
+    if (target.checked) {
+      favoriteMusic(trackId);
+    }
+  };
+
   render() {
-    const { trackName, previewUrl, trackId, favoriteMusic } = this.props;
+    const { trackName, previewUrl, trackId } = this.props;
     const trackText = `checkbox-music-${trackId}`;
     return (
       <fieldset>
@@ -17,14 +24,14 @@ class MusicCard extends React.Component {
         </audio>
         <label
           htmlFor="favorito"
-          data-testid={ trackText }
         >
           Favorita
           <input
             type="checkbox"
             name="favorito"
             id="favorito"
-            onCheck={ () => favoriteMusic(trackId) }
+            data-testid={ trackText }
+            onChange={ this.checkMusic }
           />
         </label>
       </fieldset>

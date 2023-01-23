@@ -13,6 +13,7 @@ class Album extends React.Component {
     artistName: '',
     collectionName: '',
     loading: false,
+    checkedMusics: [],
   };
 
   componentDidMount() {
@@ -48,9 +49,10 @@ class Album extends React.Component {
       ),
       async () => {
         await addSong(track);
-        this.setState(() => (
+        this.setState((prev) => (
           {
             loading: false,
+            checkedMusics: [...prev.checkedMusics, track],
           }
         ));
       },

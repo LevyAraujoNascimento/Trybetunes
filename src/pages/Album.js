@@ -82,6 +82,8 @@ class Album extends React.Component {
     );
   };
 
+  // 10º requisito
+
   render() {
     const { id, artistName, collectionName, musics, loading, favorited } = this.state;
     const listMusic = musics.map((music) => {

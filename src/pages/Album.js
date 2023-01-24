@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import Header from '../components/Header';
 import getMusics from '../services/musicsAPI';
 import MusicCard from '../components/MusicCard';
-import { addSong } from '../services/favoriteSongsAPI';
+import { addSong, getFavoriteSongs, removeSong } from '../services/favoriteSongsAPI';
 import Loading from './Loading';
 
 class Album extends React.Component {
@@ -13,7 +13,7 @@ class Album extends React.Component {
     artistName: '',
     collectionName: '',
     loading: false,
-    checkedMusics: [],
+    favorited: [],
   };
 
   componentDidMount() {
@@ -25,6 +25,7 @@ class Album extends React.Component {
       match: { params: { id },
       } } = this.props;
     const listMusic = await getMusics(id);
+    const favorited = await getFavoriteSongs();
     const { artistName, collectionName } = listMusic[0];
     this.setState(() => (
       {
@@ -32,15 +33,14 @@ class Album extends React.Component {
         collectionName,
         id,
         musics: listMusic,
+        favorited,
       }
     ));
-    console.log(listMusic);
   };
 
   favoriteMusic = async (trackId) => {
     const { musics } = this.state;
     const track = musics.find((element) => (element.trackId === trackId));
-    console.log(track);
     this.setState(
       () => (
         {
@@ -49,10 +49,33 @@ class Album extends React.Component {
       ),
       async () => {
         await addSong(track);
-        this.setState((prev) => (
+        const favorited = await getFavoriteSongs();
+        this.setState(() => (
           {
             loading: false,
-            checkedMusics: [...prev.checkedMusics, track],
+            favorited,
+          }
+        ));
+      },
+    );
+  };
+
+  unfavoriteMusic = async (trackId) => {
+    const { musics } = this.state;
+    const track = musics.find((element) => (element.trackId === trackId));
+    this.setState(
+      () => (
+        {
+          loading: true,
+        }
+      ),
+      async () => {
+        await removeSong(track);
+        const favorited = await getFavoriteSongs();
+        this.setState(() => (
+          {
+            loading: false,
+            favorited,
           }
         ));
       },
@@ -60,17 +83,25 @@ class Album extends React.Component {
   };
 
   render() {
-    const { id, artistName, collectionName, musics, loading } = this.state;
-    const listMusic = musics.map((music) => (
-      <li key={ music.trackId }>
-        <MusicCard
-          trackName={ music.trackName }
-          previewUrl={ music.previewUrl }
-          trackId={ music.trackId }
-          favoriteMusic={ this.favoriteMusic }
-        />
-      </li>
-    ));
+    const { id, artistName, collectionName, musics, loading, favorited } = this.state;
+    const listMusic = musics.map((music) => {
+      let checking = false;
+      if (favorited.some((e) => (e.trackId === music.trackId))) {
+        checking = true;
+      }
+      return (
+        <li key={ music.trackId }>
+          <MusicCard
+            trackName={ music.trackName }
+            previewUrl={ music.previewUrl }
+            trackId={ music.trackId }
+            favoriteMusic={ this.favoriteMusic }
+            unfavoriteMusic={ this.unfavoriteMusic }
+            wasChecked={ checking }
+          />
+        </li>
+      );
+    });
     listMusic.shift();
     return (
       <div data-testid="page-album">

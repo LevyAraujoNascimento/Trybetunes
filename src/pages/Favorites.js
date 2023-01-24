@@ -1,6 +1,6 @@
 import React from 'react';
 import Header from '../components/Header';
-import { getFavoriteSongs } from '../services/favoriteSongsAPI';
+import { getFavoriteSongs, removeSong } from '../services/favoriteSongsAPI';
 import Loading from './Loading';
 import MusicCard from '../components/MusicCard';
 
@@ -33,6 +33,28 @@ class Favorites extends React.Component {
     );
   };
 
+  unfavoriteMusic = async (trackId) => {
+    const { favorited } = this.state;
+    const track = favorited.find((element) => (element.trackId === trackId));
+    this.setState(
+      () => (
+        {
+          loading: true,
+        }
+      ),
+      async () => {
+        await removeSong(track);
+        const wasFavorited = await getFavoriteSongs();
+        this.setState(() => (
+          {
+            loading: false,
+            favorited: wasFavorited,
+          }
+        ));
+      },
+    );
+  };
+
   render() {
     const { favorited, loading } = this.state;
     console.log(favorited);
@@ -42,6 +64,8 @@ class Favorites extends React.Component {
           trackName={ music.trackName }
           previewUrl={ music.previewUrl }
           trackId={ music.trackId }
+          unfavoriteMusic={ this.unfavoriteMusic }
+          wasChecked
         />
       </li>
     ));
